@@ -3774,6 +3774,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5550198134612045444, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.0032404661
+      objectReference: {fileID: 0}
+    - target: {fileID: -5550198134612045444, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
+      propertyPath: m_Size.x
+      value: 0.13718367
+      objectReference: {fileID: 0}
+    - target: {fileID: -5550198134612045444, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.0048993602
+      objectReference: {fileID: 0}
+    - target: {fileID: -5550198134612045444, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
+      propertyPath: m_Size.y
+      value: 0.22526734
+      objectReference: {fileID: 0}
     - target: {fileID: 2782195657302377397, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.954
@@ -3826,7 +3842,8 @@ PrefabInstance:
       propertyPath: gauge
       value: 
       objectReference: {fileID: 551541808}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: f6e70c9fc21fbea409fb41787a0aa0bb, type: 3}
 --- !u!1 &595388231
 GameObject:
