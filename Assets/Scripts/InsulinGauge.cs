@@ -15,49 +15,50 @@ public class InsulinGauge : APlayerBar
     [Range(0, 6)]
     public int numSyringes;
 
-    private void Start()
+    private new void Awake()
     {
-        numSyringes = 1;
+        base.Awake();
+        numSyringes = 0;
+        SetNumSyringes(6);
+
         currentValue = 0;
-        for (int i = 1; i < maxSyringes; i++) 
-        {
-            syringes[i].gameObject.SetActive(false);
-        }   
         dose = 0;
         
         barText.text = "Dose";
         SetCurrentFraction = (currentValue / maxValue);
     }
 
-    //set insulin gauge
-    public float Slide()
+    private IEnumerator DrawInsulin(int maxInsulin)
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.DownArrow) && currentValue <= maxInsulin)
         {
-            return 1;
+            currentValue += 0.025f;
+            yield return new WaitForSeconds(.15f);
         }
-        else if (Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.UpArrow) && currentValue >= 0)
         {
-            return -1;
+            currentValue -= 0.1f;
+            yield return new WaitForSeconds(.1f);
         }
-
-        return 0;
     }
 
     private void SetNumSyringes(int num)
     {
-        if (num < numSyringes)
+        if (num >= 0 && num <= 6)
         {
-            for (int i = maxSyringes; i > num; i--)
+            if (num < numSyringes)
             {
-                syringes[i - 1].gameObject.SetActive(false);
+                for (int i = numSyringes; i > num; i--)
+                {
+                    syringes[i - 1].gameObject.SetActive(false);
+                }
             }
-        }
-        else
-        {
-            for (int i = 0; i < num; i++)
+            else
             {
-                syringes[i].gameObject.SetActive(true);
+                for (int i = 0; i < num; i++)
+                {
+                    syringes[i].gameObject.SetActive(true);
+                }
             }
         }
 
@@ -66,8 +67,7 @@ public class InsulinGauge : APlayerBar
 
     private void AdministerInsulin()
     {
-        player.BloodSugar -= Math.Max(0, dose * player.CorrectionFactor);
-        player.FinalBloodSugar = player.BloodSugar;
+        player.FinalBloodSugar -= Math.Max(0, dose * player.CorrectionFactor);
     }
 
     public void AddSyringe()
@@ -78,36 +78,30 @@ public class InsulinGauge : APlayerBar
 
     protected override void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.GetKey(KeyCode.Z))
         {
-            if (Input.GetKey("z"))
+            base.barText.text += currentValue.ToString();
+            if (changeDose)
             {
-                base.barText.text += currentValue.ToString();
-                print(currentValue);
-                if (changeDose)
-                {
-                    currentValue += Slide();
-                }
-                changeDose = !changeDose;
+                StartCoroutine(DrawInsulin(numSyringes));
             }
-
-            if (Input.GetKeyUp("z"))
-            {
-                dose = (int)currentValue;
-                barText.text += dose.ToString();
-                currentValue = 0f;
-                maxValue -= dose;
-                SetNumSyringes((int)(numSyringes - Mathf.CeilToInt(dose / 2))); //hardcoded bad boi
-                                                                                //fill.rectTransform.right = new Vector3(fill.rectTransform.right.x + (210 * (numSyringes / maxSyringes)),
-                                                                                //    fill.rectTransform.right.y, fill.rectTransform.right.z);
-                AdministerInsulin();
-                barText.text = "Dose: ";
-            }
-        } else
+            changeDose = !changeDose;
+        }
+        if (Input.GetKeyUp(KeyCode.Z))
         {
+            StopCoroutine(DrawInsulin(numSyringes));
+            dose = (int)currentValue;
+            currentValue = 0;
+            barText.text += dose.ToString();
+            currentValue = 0f;// animate administering insulin?
+            //maxValue -= dose;
+            
+            SetNumSyringes((int)(numSyringes - dose)); //hardcoded bad boi
+                                                                            //fill.rectTransform.right = new Vector3(fill.rectTransform.right.x + (210 * (numSyringes / maxSyringes)),
+                                                                            //    fill.rectTransform.right.y, fill.rectTransform.right.z);
+            AdministerInsulin();
             barText.text = "Dose: ";
         }
-
 
         UpdateBar();
     }

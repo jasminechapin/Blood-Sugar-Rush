@@ -33,17 +33,17 @@ public class CGM : APlayerBar
 
         if (currentValue > targetMax)
         {
-            barColor = Color.red;
+            barColor = new Color(.956f, .627f, .718f);
             fill.color = barColor;
         }
         else if (currentValue < targetMin)
         {
-            barColor = Color.blue;
+            barColor = new Color(.416f, .827f, .851f);
             fill.color = barColor;
         }
         else
         {
-            barColor = Color.green;
+            barColor = new Color(.875f, .910f, .388f);
             fill.color = barColor;
         }
     }
