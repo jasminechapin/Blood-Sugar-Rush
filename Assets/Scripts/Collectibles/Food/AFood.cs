@@ -14,6 +14,15 @@ namespace Collectibles.Food
 
         public abstract void Start();
 
+        protected new void OnCollisionEnter2D(Collision2D col)
+        {
+            if (col.gameObject.CompareTag("Player") && !collected)
+            {
+                collected = true;
+                base.OnCollisionEnter2D(col);
+            }
+        }
+
         // if the player is within range, reveal the insulin dose
         private void OnTriggerStay2D(Collider2D col)
         {

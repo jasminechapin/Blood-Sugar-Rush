@@ -12,7 +12,6 @@ namespace UnityStandardAssets._2D
 //        [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
         [SerializeField] private bool m_AirControl = true;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
-        private float m_runningTime = 0f;
 
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         private Transform m_WallCheck;    // A position marking where to check if the player is grounded.

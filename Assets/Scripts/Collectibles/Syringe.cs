@@ -6,12 +6,14 @@ public class Syringe : Collectible
 {
     public InsulinGauge gauge;
 
+
     protected new void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Player"))
+        if (col.gameObject.CompareTag("Player") && !collected)
         {
-            //gauge.AddSyringe();
+            collected = true;
+            gauge.AddSyringe();
+            base.OnCollisionEnter2D(col);
         }
-        base.OnCollisionEnter2D(col);
     }
 }
