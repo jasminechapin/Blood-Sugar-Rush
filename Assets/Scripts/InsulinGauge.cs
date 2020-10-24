@@ -11,6 +11,10 @@ public class InsulinGauge : APlayerBar
     public Syringe[] syringes = new Syringe[maxSyringes];
     bool changeDose = true;
     int dose;
+    public RectTransform plunger;
+    private float pullSpeed;
+    private float pushSpeed;
+    private Vector3 defaultPlungerLocation;
 
     [Range(0, 6)]
     public int numSyringes;
@@ -23,6 +27,9 @@ public class InsulinGauge : APlayerBar
 
         currentValue = 0;
         dose = 0;
+        pullSpeed = 2.7f;
+        pushSpeed = pullSpeed * 4;
+        defaultPlungerLocation = plunger.localPosition;
         
         barText.text = "Dose";
         SetCurrentFraction = (currentValue / maxValue);
@@ -30,15 +37,32 @@ public class InsulinGauge : APlayerBar
 
     private IEnumerator DrawInsulin(int maxInsulin)
     {
+        yield return new WaitForSeconds(.2f);
+
+
         if (Input.GetKey(KeyCode.DownArrow) && currentValue <= maxInsulin)
         {
             currentValue += 0.025f;
-            yield return new WaitForSeconds(.15f);
+            float y = plunger.localPosition.y - pullSpeed;
+            plunger.localPosition = new Vector3(plunger.localPosition.x, y, plunger.localPosition.z);
         }
+
         else if (Input.GetKey(KeyCode.UpArrow) && currentValue >= 0)
         {
             currentValue -= 0.1f;
-            yield return new WaitForSeconds(.1f);
+            float y = plunger.localPosition.y + pushSpeed;
+            plunger.localPosition = new Vector3(plunger.localPosition.x, y, plunger.localPosition.z);
+        }
+    }
+
+    private IEnumerator InjectInsulin()
+    {
+        while (currentValue > 0)
+        {
+            currentValue -= 0.2f;
+            float y = plunger.localPosition.y + (pushSpeed * 2);
+            plunger.localPosition = new Vector3(plunger.localPosition.x, y, plunger.localPosition.z);
+            yield return null;
         }
     }
 
@@ -91,10 +115,9 @@ public class InsulinGauge : APlayerBar
         {
             StopCoroutine(DrawInsulin(numSyringes));
             dose = (int)currentValue;
-            currentValue = 0;
             barText.text += dose.ToString();
-            currentValue = 0f;// animate administering insulin?
-            //maxValue -= dose;
+            
+            StartCoroutine(InjectInsulin());
             
             SetNumSyringes((int)(numSyringes - dose)); //hardcoded bad boi
                                                                             //fill.rectTransform.right = new Vector3(fill.rectTransform.right.x + (210 * (numSyringes / maxSyringes)),

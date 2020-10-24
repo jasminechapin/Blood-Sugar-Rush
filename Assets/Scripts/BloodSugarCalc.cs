@@ -161,17 +161,19 @@ public class BloodSugarCalc : MonoBehaviour
     // increases blood sugar by metabolism speed after 2 seconds
     private IEnumerator Metabolize(Condition condition)
     {
-        //changed from while to if
-        if ((BloodSugar - FinalBloodSugar) >= (1 / metabolismSpeed))
-        {
-            BloodSugar -= (1 / metabolismSpeed);
-            yield return new WaitForSeconds(5f);
-        }
-        else
-        {
-            BloodSugar += (1 / metabolismSpeed);
-            yield return new WaitForSeconds(5f);
-        }
+        //yield return new WaitForSeconds(5f);
+
+            //changed from while to if
+            if ((BloodSugar - FinalBloodSugar) >= (1 / metabolismSpeed))
+            {
+                BloodSugar -= (1 / metabolismSpeed);
+            }
+            else
+            {
+                BloodSugar += (1 / metabolismSpeed);
+            }
+        
+        //yield return null;
     }
 
     public void SpeedUpDigestion()
