@@ -22,6 +22,7 @@ public class InsulinGauge : APlayerBar
     private new void Awake()
     {
         base.Awake();
+        defaultPlungerLocation = plunger.localPosition;
         numSyringes = 0;
         SetNumSyringes(6);
 
@@ -29,7 +30,6 @@ public class InsulinGauge : APlayerBar
         dose = 0;
         pullSpeed = 2.7f;
         pushSpeed = pullSpeed * 4;
-        defaultPlungerLocation = plunger.localPosition;
         
         barText.text = "Dose";
         SetCurrentFraction = (currentValue / maxValue);
@@ -64,25 +64,32 @@ public class InsulinGauge : APlayerBar
             plunger.localPosition = new Vector3(plunger.localPosition.x, y, plunger.localPosition.z);
             yield return null;
         }
+
+        plunger.localPosition = defaultPlungerLocation;
     }
 
     private void SetNumSyringes(int num)
     {
-        if (num >= 0 && num <= 6)
+        if (num < 0)
         {
-            if (num < numSyringes)
+            throw new Exception("Number of syringes is less than zero");
+        }
+
+        // remove syringes
+        if (num < numSyringes)
+        {
+            for (int i = numSyringes; i > num; i--)
             {
-                for (int i = numSyringes; i > num; i--)
-                {
-                    syringes[i - 1].gameObject.SetActive(false);
-                }
+                syringes[i - 1].gameObject.SetActive(false);
             }
-            else
+        }
+
+        // add syringes
+        if (num > numSyringes)
+        {
+            for (int i = 0; i < num; i++)
             {
-                for (int i = 0; i < num; i++)
-                {
-                    syringes[i].gameObject.SetActive(true);
-                }
+                syringes[i].gameObject.SetActive(true);
             }
         }
 
@@ -96,8 +103,11 @@ public class InsulinGauge : APlayerBar
 
     public void AddSyringe()
     {
-        numSyringes++;
-        SetNumSyringes(numSyringes);
+        if (numSyringes < maxSyringes)
+        {
+            numSyringes++;
+            SetNumSyringes(numSyringes);
+        }
     }
 
     protected override void Update()
@@ -119,9 +129,7 @@ public class InsulinGauge : APlayerBar
             
             StartCoroutine(InjectInsulin());
             
-            SetNumSyringes((int)(numSyringes - dose)); //hardcoded bad boi
-                                                                            //fill.rectTransform.right = new Vector3(fill.rectTransform.right.x + (210 * (numSyringes / maxSyringes)),
-                                                                            //    fill.rectTransform.right.y, fill.rectTransform.right.z);
+            SetNumSyringes((int)(numSyringes - dose));
             AdministerInsulin();
             barText.text = "Dose: ";
         }

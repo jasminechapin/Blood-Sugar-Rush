@@ -99,6 +99,7 @@ public class BloodSugarCalc : MonoBehaviour
 
     private void Update()
     {
+        lowVision.transform.position = transform.position;
         if (BloodSugar <= 0)
         {
             Metabolizing = false;
@@ -163,15 +164,17 @@ public class BloodSugarCalc : MonoBehaviour
     {
         //yield return new WaitForSeconds(5f);
 
-            //changed from while to if
-            if ((BloodSugar - FinalBloodSugar) >= (1 / metabolismSpeed))
-            {
-                BloodSugar -= (1 / metabolismSpeed);
-            }
-            else
-            {
-                BloodSugar += (1 / metabolismSpeed);
-            }
+        //changed from while to if
+        if ((BloodSugar - FinalBloodSugar) >= (1 / metabolismSpeed))
+        {
+            BloodSugar -= (1 / metabolismSpeed);
+            yield return new WaitForSeconds(5f);
+        }
+        else
+        {
+            BloodSugar += (1 / metabolismSpeed);
+            yield return new WaitForSeconds(5f);
+        }
         
         //yield return null;
     }
